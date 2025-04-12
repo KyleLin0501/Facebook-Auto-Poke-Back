@@ -25,33 +25,35 @@ function getRandom(n, m) {
 
 function autoPoke() {
     const maxTimes = 10;
-    const random_number = getRandom(3000, 5000); // 每次間隔
 
-    for (let i = 0; i < maxTimes; i++) {
-        (function (i) {
-            setTimeout(function () {
-                try {
-                    const button = document.querySelector('[aria-label="戳回去"]');
-                    if (button) {
-                        button.click();
-                        console.log(`戳回去：第 ${i + 1} 次`);
-                    } else {
-                        window.scrollTo(0, document.body.scrollHeight);
+    function pokeRound(round = 1) {
+        const random_number = getRandom(3000, 5000); // 每次間隔
+
+        for (let i = 0; i < maxTimes; i++) {
+            (function (i) {
+                setTimeout(function () {
+                    try {
+                        const button = document.querySelector('[aria-label="戳回去"]');
+                        if (button) {
+                            button.click();
+                            console.log(`第 ${round} 輪，第 ${i + 1} 次戳回去`);
+                        } else {
+                            window.scrollTo(0, document.body.scrollHeight);
+                        }
+                    } catch (e) {
+                        console.error('錯誤：', e);
                     }
-                } catch (e) {
-                    console.error('錯誤：', e);
-                }
 
-                // 如果是最後一次，就 reload
-                if (i === maxTimes - 1) {
-                    setTimeout(() => location.reload(), 2000);
-                }
-            }, random_number * i);
-        })(i);
+                    // 最後一次就啟動下一輪
+                    if (i === maxTimes - 1) {
+                        setTimeout(() => pokeRound(round + 1), 3000);
+                    }
+                }, random_number * i);
+            })(i);
+        }
     }
+
+    pokeRound(); // 啟動第一次
 }
 
 autoPoke();
-
-
-
